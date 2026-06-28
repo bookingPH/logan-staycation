@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Your Stay</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="nav-logo">
+        <span class="nav-logo-name" id="nav-name">Staycation</span>
+        <span class="nav-logo-tag">Book Direct</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html#rooms">Rooms</a></li>
+        <li><a href="booking-policy.html">Policies</a></li>
+      </ul>
+      <a href="index.html" class="btn btn-outline nav-book" style="padding:0.5rem 1.1rem;font-size:0.85rem;">
+        <i class="fa-solid fa-arrow-left"></i> Back
+      </a>
+    </div>
+  </nav>
+
+  <!-- BOOKING WRAPPER -->
+  <div class="booking-wrapper">
+
+    <!-- UNIT BAR -->
+    <div class="booking-unit-bar" id="unit-bar" style="display:none;">
+      <div class="booking-unit-photo" id="unit-bar-photo">
+        <div style="width:100%;height:100%;background:var(--bg-alt);display:flex;align-items:center;justify-content:center;">
+          <i class="fa-solid fa-image" style="color:var(--border);font-size:1.5rem;"></i>
+        </div>
+      </div>
+      <div class="booking-unit-info">
+        <div class="booking-unit-label">You're booking</div>
+        <div class="booking-unit-name" id="unit-bar-name">Loading...</div>
+        <div class="booking-unit-meta" id="unit-bar-meta"></div>
+      </div>
+    </div>
+
+    <!-- PROGRESS BAR -->
+    <div class="booking-progress">
+      <div class="progress-step">
+        <div class="progress-dot active" id="dot-1">1</div>
+        <div class="progress-label active" id="lbl-1">Dates</div>
+      </div>
+      <div class="progress-line" id="line-1"></div>
+      <div class="progress-step">
+        <div class="progress-dot" id="dot-2">2</div>
+        <div class="progress-label" id="lbl-2">Details</div>
+      </div>
+      <div class="progress-line" id="line-2"></div>
+      <div class="progress-step">
+        <div class="progress-dot" id="dot-3">3</div>
+        <div class="progress-label" id="lbl-3">Add-ons</div>
+      </div>
+      <div class="progress-line" id="line-3"></div>
+      <div class="progress-step">
+        <div class="progress-dot" id="dot-4">4</div>
+        <div class="progress-label" id="lbl-4">Payment</div>
+      </div>
+    </div>
+
+    <!-- ======== STEP 1: DATES ======== -->
+    <div class="step-panel active" id="step-1">
+      <div class="booking-layout">
+        <div>
+          <h2 class="step-heading">Select Your Dates</h2>
+          <p class="step-sub">Pick your check-in and check-out. Red dates are unavailable.</p>
+
+          <div class="calendar-nav">
+            <button class="calendar-nav-btn" id="cal-prev"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="calendar-month-label" id="cal-month-label"></div>
+            <button class="calendar-nav-btn" id="cal-next"><i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+
+          <div class="calendar-grid" id="calendar-grid"></div>
+
+          <div class="cal-conflict-msg" id="cal-conflict">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            These dates were just taken by someone else. Please choose new dates.
+          </div>
+
+          <div class="date-selection-summary">
+            <div class="date-chip" id="chip-checkin">
+              <div class="date-chip-label">Check-in</div>
+              <div class="date-chip-value" id="chip-checkin-val">Not selected</div>
+            </div>
+            <div class="date-chip" id="chip-checkout">
+              <div class="date-chip-label">Check-out</div>
+              <div class="date-chip-value" id="chip-checkout-val">Not selected</div>
+            </div>
+            <div class="date-chip" id="chip-nights">
+              <div class="date-chip-label">Duration</div>
+              <div class="date-chip-value" id="chip-nights-val">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="price-summary">
+            <div class="price-summary-title">Price Summary</div>
+            <div id="price-summary-content">
+              <div class="summary-empty">Select dates to see pricing</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-actions">
+        <a href="index.html#rooms" class="btn btn-outline">Cancel</a>
+        <button class="btn btn-primary" id="btn-next-1" disabled>
+          Continue <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- ======== STEP 2: GUEST DETAILS ======== -->
+    <div class="step-panel" id="step-2">
+      <div class="booking-layout">
+        <div>
+          <h2 class="step-heading">Your Details</h2>
+          <p class="step-sub">We'll use this to send your booking confirmation.</p>
+
+          <div class="form-group">
+            <label>Full Name <span style="color:#E74C3C">*</span></label>
+            <input type="text" class="form-input" id="f-name" placeholder="Juan dela Cruz" autocomplete="name">
+            <div class="form-error" id="err-name">Please enter your full name.</div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email Address <span style="color:#E74C3C">*</span></label>
+              <input type="email" class="form-input" id="f-email" placeholder="juan@email.com" autocomplete="email">
+              <div class="form-error" id="err-email">Please enter a valid email address.</div>
+            </div>
+            <div class="form-group">
+              <label>Phone Number <span style="color:#E74C3C">*</span></label>
+              <input type="tel" class="form-input" id="f-phone" placeholder="09xxxxxxxxx" autocomplete="tel">
+              <div class="form-error" id="err-phone">Please enter a valid phone number.</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Number of Guests <span style="color:#E74C3C">*</span></label>
+            <input type="number" class="form-input" id="f-guests" min="1" value="1">
+            <div class="form-hint" id="guests-hint"></div>
+            <div class="form-error" id="err-guests">Guest count exceeds the maximum allowed.</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="price-summary">
+            <div class="price-summary-title">Price Summary</div>
+            <div id="price-summary-2"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-actions">
+        <button class="btn btn-outline" id="btn-back-2">
+          <i class="fa-solid fa-arrow-left"></i> Back
+        </button>
+        <button class="btn btn-primary" id="btn-next-2">
+          Continue <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- ======== STEP 3: ADD-ONS ======== -->
+    <div class="step-panel" id="step-3">
+      <div class="booking-layout">
+        <div>
+          <h2 class="step-heading">Add-ons</h2>
+          <p class="step-sub">Enhance your stay with optional extras. You can skip this step.</p>
+          <div id="addons-list"></div>
+        </div>
+
+        <div>
+          <div class="price-summary">
+            <div class="price-summary-title">Price Summary</div>
+            <div id="price-summary-3"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-actions">
+        <button class="btn btn-outline" id="btn-back-3">
+          <i class="fa-solid fa-arrow-left"></i> Back
+        </button>
+        <button class="btn btn-primary" id="btn-next-3">
+          Continue <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- ======== STEP 4: PAYMENT ======== -->
+    <div class="step-panel" id="step-4">
+      <div class="booking-layout">
+        <div>
+          <h2 class="step-heading">Payment</h2>
+          <p class="step-sub">Choose how you'll pay the reservation fee, then upload your screenshot.</p>
+
+          <div class="conflict-error" id="conflict-error">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <strong>These dates were just booked by someone else.</strong><br>
+            Please go back and choose different dates.
+            <br><br>
+            <button class="btn btn-outline" id="conflict-back-btn" style="width:100%;justify-content:center;">
+              <i class="fa-solid fa-calendar"></i> Choose New Dates
+            </button>
+          </div>
+
+          <p style="font-size:0.85rem;font-weight:600;margin-bottom:0.75rem;color:var(--text);">
+            Select Payment Method
+          </p>
+          <div class="payment-tabs">
+            <div class="payment-tab active" data-method="gcash">GCash</div>
+            <div class="payment-tab" data-method="paymaya">PayMaya</div>
+            <div class="payment-tab" data-method="bank">Bank Transfer</div>
+          </div>
+
+          <!-- GCash -->
+          <div class="payment-info-box active" id="pay-gcash">
+            <div class="payment-qr" id="qr-gcash">
+              <span><i class="fa-solid fa-qrcode" style="font-size:2rem;margin-bottom:0.25rem;display:block;"></i>QR not set</span>
+            </div>
+            <div class="payment-detail-row">
+              <span class="label">Account Name</span>
+              <span class="value" id="gcash-name">—</span>
+            </div>
+            <div class="payment-detail-row">
+              <span class="label">GCash Number</span>
+              <span class="value" id="gcash-number">—</span>
+            </div>
+          </div>
+
+          <!-- PayMaya -->
+          <div class="payment-info-box" id="pay-paymaya">
+            <div class="payment-qr" id="qr-paymaya">
+              <span><i class="fa-solid fa-qrcode" style="font-size:2rem;margin-bottom:0.25rem;display:block;"></i>QR not set</span>
+            </div>
+            <div class="payment-detail-row">
+              <span class="label">Account Name</span>
+              <span class="value" id="paymaya-name">—</span>
+            </div>
+            <div class="payment-detail-row">
+              <span class="label">Maya Number</span>
+              <span class="value" id="paymaya-number">—</span>
+            </div>
+          </div>
+
+          <!-- Bank Transfer -->
+          <div class="payment-info-box" id="pay-bank">
+            <div class="payment-qr" id="qr-bank">
+              <span><i class="fa-solid fa-qrcode" style="font-size:2rem;margin-bottom:0.25rem;display:block;"></i>QR not set</span>
+            </div>
+            <div class="payment-detail-row">
+              <span class="label">Bank Name</span>
+              <span class="value" id="bank-name">—</span>
+            </div>
+            <div class="payment-detail-row">
+              <span class="label">Account Name</span>
+              <span class="value" id="bank-acct-name">—</span>
+            </div>
+            <div class="payment-detail-row">
+              <span class="label">Account Number</span>
+              <span class="value" id="bank-acct-number">—</span>
+            </div>
+          </div>
+
+          <div class="transfer-instruction" id="transfer-instruction">
+            Send <strong id="deposit-amount">₱500</strong> and upload your screenshot below
+          </div>
+
+          <!-- Upload -->
+          <div class="upload-area" id="upload-area">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <p>Tap to upload your payment screenshot</p>
+            <div class="upload-hint">JPG, PNG, or WebP · Max 10MB</div>
+          </div>
+          <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" style="display:none;">
+
+          <div class="upload-preview" id="upload-preview">
+            <img id="preview-img" src="" alt="Payment screenshot">
+            <div class="upload-preview-name" id="preview-name"></div>
+          </div>
+
+          <div class="upload-progress-bar" id="upload-progress-bar">
+            <div class="upload-progress-fill" id="upload-progress-fill"></div>
+          </div>
+
+          <div class="form-error" id="err-upload" style="font-size:0.875rem;margin-top:0.5rem;"></div>
+        </div>
+
+        <div>
+          <div class="price-summary">
+            <div class="price-summary-title">Price Summary</div>
+            <div id="price-summary-4"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-actions">
+        <button class="btn btn-outline" id="btn-back-4">
+          <i class="fa-solid fa-arrow-left"></i> Back
+        </button>
+        <button class="btn btn-primary" id="btn-confirm" disabled>
+          <i class="fa-solid fa-check"></i> Confirm Booking
+        </button>
+      </div>
+    </div>
+
+    <!-- ======== CONFIRMATION ======== -->
+    <div class="step-panel" id="step-confirm">
+      <div class="confirm-screen">
+        <div class="confirm-icon">
+          <i class="fa-solid fa-check"></i>
+        </div>
+        <h2 class="confirm-title">Booking Request Sent!</h2>
+        <div class="confirm-ref" id="conf-ref">BK-...</div>
+
+        <div class="confirm-summary">
+          <div class="confirm-row">
+            <span class="label">Property</span>
+            <span class="value" id="conf-unit">—</span>
+          </div>
+          <div class="confirm-row">
+            <span class="label">Guest Name</span>
+            <span class="value" id="conf-name">—</span>
+          </div>
+          <div class="confirm-row">
+            <span class="label">Check-in</span>
+            <span class="value" id="conf-checkin">—</span>
+          </div>
+          <div class="confirm-row">
+            <span class="label">Check-out</span>
+            <span class="value" id="conf-checkout">—</span>
+          </div>
+          <div class="confirm-row">
+            <span class="label">Nights</span>
+            <span class="value" id="conf-nights">—</span>
+          </div>
+          <div class="confirm-row">
+            <span class="label">Grand Total</span>
+            <span class="value" id="conf-total" style="color:var(--primary);">—</span>
+          </div>
+          <div class="confirm-row">
+            <span class="label">Payment via</span>
+            <span class="value" id="conf-method">—</span>
+          </div>
+        </div>
+
+        <p class="confirm-msg" id="conf-msg">
+          Your payment screenshot is being verified. We'll send a confirmation to
+          <strong id="conf-email">your email</strong> once approved.<br>
+          This usually takes <strong>1–2 hours</strong>.
+        </p>
+
+        <a href="index.html" class="btn btn-outline" style="margin-top:0.5rem;">
+          <i class="fa-solid fa-house"></i> Back to Home
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- FOOTER -->
+  <footer style="margin-top:0;">
+    <div class="container">
+      <div class="footer-bottom">
+        <span id="footer-copy">© 2026 Staycation. All rights reserved.</span>
+        <span>Powered by <strong style="color:var(--primary)">BookingPH</strong></span>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import {
+      getFirestore, doc, collection,
+      query, where, getDocs, getDoc,
+      addDoc, setDoc, updateDoc,
+      onSnapshot, serverTimestamp
+    } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+    import { FIREBASE_CONFIG, CLIENT_ID } from './firebase-config.js';
+
+    // ── INIT ──────────────────────────────────────────
+    const app = initializeApp(FIREBASE_CONFIG);
+    const db = getFirestore(app);
+    const clientRef = doc(db, 'clients', CLIENT_ID);
+
+    const params = new URLSearchParams(location.search);
+    const unitId = params.get('id');
+    if (!unitId) { location.href = 'index.html'; }
+
+    const CLOUDINARY_CLOUD = 'dwqweaowd';
+    const CLOUDINARY_PRESET = 'booking-screenshots';
+    const SEND_RECEIPT_URL = 'https://staycation-admin.netlify.app/.netlify/functions/send-receipt';
+
+    // ── HELPERS ───────────────────────────────────────
+    const php = n => '₱' + Number(n).toLocaleString();
+    const el = id => document.getElementById(id);
+
+    function todayStr() {
+      const d = new Date();
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    }
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+
+    function dateToStr(d) {
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    }
+
+    function addDays(dateStr, n) {
+      const d = new Date(dateStr + 'T12:00:00');
+      d.setDate(d.getDate() + n);
+      return dateToStr(d);
+    }
+
+    function formatDisplayDate(dateStr) {
+      const d = new Date(dateStr + 'T12:00:00');
+      return d.toLocaleDateString('en-PH', { weekday:'short', month:'short', day:'numeric', year:'numeric' });
+    }
+
+    function formatShortDate(dateStr) {
+      const d = new Date(dateStr + 'T12:00:00');
+      return d.toLocaleDateString('en-PH', { month:'short', day:'numeric' });
+    }
+
+    function diffDays(a, b) {
+      const da = new Date(a + 'T12:00:00');
+      const db = new Date(b + 'T12:00:00');
+      return Math.round((db - da) / 86400000);
+    }
+
+    const MONTH_NAMES = ['January','February','March','April','May','June',
+                         'July','August','September','October','November','December'];
+    const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+    function showToast(msg, type='', duration=3500) {
+      const t = el('toast');
+      t.textContent = msg;
+      t.className = 'toast show' + (type ? ' ' + type : '');
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => t.classList.remove('show'), duration);
+    }
+
+    // ── STATE ─────────────────────────────────────────
+    const S = {
+      unit: null,
+      settings: null,
+      allAddons: [],
+      step: 1,
+      checkIn: null,
+      checkOut: null,
+      nights: 0,
+      baseTotal: 0,
+      numGuests: 1,
+      extraGuests: 0,
+      extraGuestTotal: 0,
+      selectedAddons: {},
+      addonsTotal: 0,
+      grandTotal: 0,
+      paymentMethod: 'gcash',
+      screenshotFile: null,
+      screenshotURL: '',
+      submitting: false,
+    };
+
+    // ── CALENDAR STATE ────────────────────────────────
+    let calYear = new Date().getFullYear();
+    let calMonth = new Date().getMonth();
+    let blockedSet = new Set();
+    let hoverDate = null;
+    let unsubCalendar = null;
+
+    // ── LOAD DATA ─────────────────────────────────────
+    async function loadData() {
+      try {
+        const [unitSnap, settingsSnap] = await Promise.all([
+          getDoc(doc(clientRef, 'units', unitId)),
+          getDoc(doc(clientRef, 'settings', 'main')),
+        ]);
+
+        if (!unitSnap.exists() || unitSnap.data().status !== 'active') {
+          location.href = 'index.html';
+          return;
+        }
+
+        S.unit = { id: unitSnap.id, ...unitSnap.data() };
+        S.settings = settingsSnap.exists() ? settingsSnap.data() : {};
+
+        // Unit bar
+        el('unit-bar').style.display = 'flex';
+        el('unit-bar-name').textContent = S.unit.name;
+        el('unit-bar-meta').textContent =
+          `Up to ${S.unit.maxGuests} guests · Check-in ${S.unit.checkIn || '2:00 PM'} · Check-out ${S.unit.checkOut || '12:00 PM'}`;
+
+        if (S.unit.photoURLs && S.unit.photoURLs.length) {
+          el('unit-bar-photo').innerHTML = `<img src="${S.unit.photoURLs[0]}" alt="${S.unit.name}" style="width:100%;height:100%;object-fit:cover;">`;
+        }
+
+        // Nav + footer branding
+        if (S.settings.companyName) {
+          el('nav-name').textContent = S.settings.companyName;
+          document.title = 'Book — ' + S.settings.companyName;
+          el('footer-copy').textContent = `© ${new Date().getFullYear()} ${S.settings.companyName}. All rights reserved.`;
+        }
+
+        // Payment details
+        const st = S.settings;
+        el('gcash-name').textContent = st.gcashName || '—';
+        el('gcash-number').textContent = st.gcashNumber || '—';
+        if (st.gcashQR) el('qr-gcash').innerHTML = `<img src="${st.gcashQR}" alt="GCash QR">`;
+
+        el('paymaya-name').textContent = st.paymayaName || '—';
+        el('paymaya-number').textContent = st.paymayaNumber || '—';
+        if (st.paymayaQR) el('qr-paymaya').innerHTML = `<img src="${st.paymayaQR}" alt="PayMaya QR">`;
+
+        el('bank-name').textContent = st.bankName || '—';
+        el('bank-acct-name').textContent = st.bankAccountName || '—';
+        el('bank-acct-number').textContent = st.bankAccountNumber || '—';
+        if (st.bankQR) el('qr-bank').innerHTML = `<img src="${st.bankQR}" alt="Bank QR">`;
+
+        const depositAmt = st.downPaymentAmount || 500;
+        el('deposit-amount').textContent = php(depositAmt);
+
+        // Guests hint
+        const max = S.unit.maxGuests + (S.unit.maxExtraGuests || 0);
+        el('guests-hint').textContent = `Base: ${S.unit.maxGuests} guests · Maximum: ${max} guests` +
+          (S.unit.maxExtraGuests ? ` (extra guests: +${php(S.unit.extraGuestFee || 0)}/person/night)` : '');
+        el('f-guests').max = max;
+
+        // Load add-ons
+        const addonsSnap = await getDocs(collection(clientRef, 'addons'));
+        S.allAddons = [];
+        addonsSnap.forEach(d => {
+          const a = d.data();
+          if (!a.unitId || a.unitId === 'all' || a.unitId === unitId) {
+            S.allAddons.push({ id: d.id, ...a });
+          }
+        });
+        renderAddons();
+
+        // Start real-time calendar listener
+        startCalendarListener();
+        renderCalendar();
+
+      } catch (e) {
+        console.error('Load error:', e);
+        showToast('Failed to load booking details. Please refresh.', 'error', 6000);
+      }
+    }
+
+    // ── CALENDAR LISTENER ─────────────────────────────
+    function startCalendarListener() {
+      if (unsubCalendar) unsubCalendar();
+
+      const bookingsQuery = query(
+        collection(clientRef, 'bookings'),
+        where('unitId', '==', unitId),
+        where('status', 'in', ['pending_review', 'confirmed'])
+      );
+
+      const blockedQuery = collection(clientRef, 'blocked_dates');
+
+      let bookingDates = new Set();
+      let manualDates = new Set();
+
+      unsubCalendar = onSnapshot(bookingsQuery, snap => {
+        bookingDates = new Set();
+        snap.forEach(d => {
+          const { checkIn, checkOut } = d.data();
+          if (checkIn && checkOut) {
+            let cur = checkIn;
+            while (cur < checkOut) {
+              bookingDates.add(cur);
+              cur = addDays(cur, 1);
+            }
+          }
+        });
+        rebuildBlocked(bookingDates, manualDates);
+      });
+
+      getDocs(blockedQuery).then(snap => {
+        manualDates = new Set();
+        snap.forEach(d => {
+          const { unitId: bUnitId, startDate, endDate } = d.data();
+          if (bUnitId && bUnitId !== unitId && bUnitId !== 'all') return;
+          if (startDate && endDate) {
+            let cur = startDate;
+            while (cur <= endDate) {
+              manualDates.add(cur);
+              cur = addDays(cur, 1);
+            }
+          }
+        });
+        rebuildBlocked(bookingDates, manualDates);
+      }).catch(() => {});
+    }
+
+    function rebuildBlocked(bookingDates, manualDates) {
+      blockedSet = new Set([...bookingDates, ...manualDates]);
+
+      // Check if selected dates are now blocked
+      if (S.checkIn && blockedSet.has(S.checkIn)) {
+        S.checkIn = null; S.checkOut = null;
+        el('cal-conflict').classList.add('show');
+        setTimeout(() => el('cal-conflict').classList.remove('show'), 5000);
+        updateDateChips();
+        updatePriceSummary();
+        el('btn-next-1').disabled = true;
+      } else if (S.checkOut) {
+        let cur = S.checkIn;
+        while (cur < S.checkOut) {
+          if (blockedSet.has(cur)) {
+            S.checkIn = null; S.checkOut = null;
+            el('cal-conflict').classList.add('show');
+            setTimeout(() => el('cal-conflict').classList.remove('show'), 5000);
+            updateDateChips();
+            updatePriceSummary();
+            el('btn-next-1').disabled = true;
+            break;
+          }
+          cur = addDays(cur, 1);
+        }
+      }
+
+      renderCalendar();
+    }
+
+    // ── CALENDAR RENDER ───────────────────────────────
+    function renderCalendar() {
+      const grid = el('calendar-grid');
+      el('cal-month-label').textContent = `${MONTH_NAMES[calMonth]} ${calYear}`;
+
+      let html = DAY_NAMES.map(d => `<div class="cal-day-name">${d}</div>`).join('');
+
+      const firstDay = new Date(calYear, calMonth, 1).getDay();
+      const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+      const today = todayStr();
+
+      for (let i = 0; i < firstDay; i++) html += `<div class="cal-day empty"></div>`;
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = `${calYear}-${pad(calMonth+1)}-${pad(d)}`;
+        let cls = 'cal-day';
+        let title = '';
+
+        if (dateStr < today) {
+          cls += ' past';
+        } else if (blockedSet.has(dateStr)) {
+          cls += ' blocked'; title = 'Unavailable';
+        } else {
+          cls += ' available';
+        }
+
+        if (dateStr === today) cls += ' today';
+
+        if (S.checkIn && S.checkOut) {
+          if (dateStr === S.checkIn) cls += ' range-start';
+          else if (dateStr === S.checkOut) cls += ' range-end';
+          else if (dateStr > S.checkIn && dateStr < S.checkOut) cls += ' in-range';
+        } else if (S.checkIn && !S.checkOut) {
+          if (dateStr === S.checkIn) cls += ' range-start range-end';
+          else if (hoverDate && dateStr > S.checkIn && dateStr <= hoverDate) cls += ' in-range';
+          else if (hoverDate && dateStr === hoverDate) cls += ' range-end';
+        }
+
+        html += `<div class="${cls}" data-date="${dateStr}" title="${title}">${d}</div>`;
+      }
+
+      grid.innerHTML = html;
+
+      // Events
+      grid.querySelectorAll('.cal-day.available').forEach(cell => {
+        cell.addEventListener('click', onDateClick);
+        cell.addEventListener('mouseenter', () => {
+          if (S.checkIn && !S.checkOut) { hoverDate = cell.dataset.date; renderCalendar(); }
+        });
+        cell.addEventListener('mouseleave', () => {
+          if (S.checkIn && !S.checkOut) { hoverDate = null; renderCalendar(); }
+        });
+      });
+    }
+
+    function onDateClick(e) {
+      const date = e.currentTarget.dataset.date;
+
+      if (!S.checkIn) {
+        S.checkIn = date;
+      } else if (!S.checkOut) {
+        if (date <= S.checkIn) {
+          S.checkIn = date;
+        } else {
+          // Check if any blocked date in the range
+          let conflict = false;
+          let cur = S.checkIn;
+          while (cur < date) {
+            cur = addDays(cur, 1);
+            if (cur < date && blockedSet.has(cur)) { conflict = true; break; }
+          }
+          if (conflict) {
+            showToast('A blocked date is within your selected range.', 'error');
+            return;
+          }
+          S.checkOut = date;
+          hoverDate = null;
+          calcBaseTotal();
+          el('btn-next-1').disabled = false;
+        }
+      } else {
+        // Reset and start over
+        S.checkIn = date;
+        S.checkOut = null;
+        S.nights = 0;
+        S.baseTotal = 0;
+        el('btn-next-1').disabled = true;
+      }
+
+      updateDateChips();
+      updatePriceSummary();
+      renderCalendar();
+    }
+
+    function calcBaseTotal() {
+      if (!S.checkIn || !S.checkOut) return;
+      S.nights = diffDays(S.checkIn, S.checkOut);
+      let total = 0;
+      let cur = S.checkIn;
+      while (cur < S.checkOut) {
+        const day = new Date(cur + 'T12:00:00').getDay();
+        const isWeekend = day === 5 || day === 6;
+        total += (isWeekend && S.unit.weekendRate) ? S.unit.weekendRate : S.unit.weekdayRate;
+        cur = addDays(cur, 1);
+      }
+      S.baseTotal = total;
+      calcGrandTotal();
+    }
+
+    function calcExtraGuests() {
+      const base = S.unit.maxGuests || 0;
+      const extra = Math.max(0, S.numGuests - base);
+      S.extraGuests = extra;
+      S.extraGuestTotal = extra * (S.unit.extraGuestFee || 0) * S.nights;
+      calcGrandTotal();
+    }
+
+    function calcAddonsTotal() {
+      let total = 0;
+      for (const [id, addon] of Object.entries(S.selectedAddons)) {
+        total += addon.billingType === 'pernight' ? addon.price * S.nights : addon.price;
+      }
+      S.addonsTotal = total;
+      calcGrandTotal();
+    }
+
+    function calcGrandTotal() {
+      S.grandTotal = S.baseTotal + S.extraGuestTotal + S.addonsTotal;
+    }
+
+    function updateDateChips() {
+      if (S.checkIn) {
+        el('chip-checkin').classList.add('filled');
+        el('chip-checkin-val').textContent = formatShortDate(S.checkIn);
+      } else {
+        el('chip-checkin').classList.remove('filled');
+        el('chip-checkin-val').textContent = 'Not selected';
+      }
+
+      if (S.checkOut) {
+        el('chip-checkout').classList.add('filled');
+        el('chip-checkout-val').textContent = formatShortDate(S.checkOut);
+        el('chip-nights').classList.add('filled');
+        el('chip-nights-val').textContent = `${S.nights} night${S.nights !== 1 ? 's' : ''}`;
+      } else {
+        el('chip-checkout').classList.remove('filled');
+        el('chip-checkout-val').textContent = 'Not selected';
+        el('chip-nights').classList.remove('filled');
+        el('chip-nights-val').textContent = '—';
+      }
+    }
+
+    // ── PRICE SUMMARY ─────────────────────────────────
+    function updatePriceSummary() {
+      const html = buildPriceSummaryHTML();
+      el('price-summary-content').innerHTML = html;
+      el('price-summary-2').innerHTML = html;
+      el('price-summary-3').innerHTML = html;
+      el('price-summary-4').innerHTML = html;
+    }
+
+    function buildPriceSummaryHTML() {
+      if (!S.checkIn || !S.checkOut) {
+        return `<div class="summary-empty">Select dates to see pricing</div>`;
+      }
+
+      let rows = `
+        <div class="price-row">
+          <span>${S.nights} night${S.nights !== 1 ? 's' : ''}</span>
+          <span><strong>${php(S.baseTotal)}</strong></span>
+        </div>`;
+
+      if (S.extraGuestTotal > 0) {
+        rows += `<div class="price-row">
+          <span>Extra guests (${S.extraGuests})</span>
+          <span>${php(S.extraGuestTotal)}</span>
+        </div>`;
+      }
+
+      for (const addon of Object.values(S.selectedAddons)) {
+        const addonTotal = addon.billingType === 'pernight' ? addon.price * S.nights : addon.price;
+        rows += `<div class="price-row">
+          <span>${addon.name}</span>
+          <span>${php(addonTotal)}</span>
+        </div>`;
+      }
+
+      const depositAmt = S.settings?.downPaymentAmount || 500;
+
+      return rows + `
+        <hr class="price-divider">
+        <div class="price-total-row">
+          <span>Total</span>
+          <span class="total-amount">${php(S.grandTotal)}</span>
+        </div>
+        <div class="deposit-note">
+          <i class="fa-solid fa-shield-halved" style="color:var(--primary);"></i>
+          Reserve now with <strong>${php(depositAmt)}</strong> only.<br>
+          Balance due at check-in.
+        </div>`;
+    }
+
+    // ── RENDER ADD-ONS ────────────────────────────────
+    function renderAddons() {
+      const list = el('addons-list');
+      if (!S.allAddons.length) {
+        list.innerHTML = `<div class="no-addons">
+          <i class="fa-solid fa-box-open" style="font-size:1.5rem;margin-bottom:0.5rem;display:block;color:var(--border);"></i>
+          No add-ons available for this room.
+        </div>`;
+        return;
+      }
+
+      list.innerHTML = S.allAddons.map(a => `
+        <div class="addon-item" data-id="${a.id}">
+          <div class="addon-checkbox"><i class="fa-solid fa-check"></i></div>
+          <div class="addon-body">
+            <div class="addon-name">${a.name}</div>
+            <div class="addon-billing">${a.billingType === 'pernight' ? 'Charged per night' : 'One-time charge'}</div>
+          </div>
+          <div class="addon-price">${php(a.price)}</div>
+        </div>
+      `).join('');
+
+      list.querySelectorAll('.addon-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const id = item.dataset.id;
+          const addon = S.allAddons.find(a => a.id === id);
+          if (S.selectedAddons[id]) {
+            delete S.selectedAddons[id];
+            item.classList.remove('selected');
+          } else {
+            S.selectedAddons[id] = addon;
+            item.classList.add('selected');
+          }
+          calcAddonsTotal();
+          updatePriceSummary();
+        });
+      });
+    }
+
+    // ── PROGRESS BAR ──────────────────────────────────
+    function setProgress(step) {
+      S.step = step;
+      for (let i = 1; i <= 4; i++) {
+        const dot = el(`dot-${i}`);
+        const lbl = el(`lbl-${i}`);
+        dot.className = 'progress-dot' + (i < step ? ' done' : i === step ? ' active' : '');
+        lbl.className = 'progress-label' + (i < step ? ' done' : i === step ? ' active' : '');
+        if (i < 4) {
+          el(`line-${i}`).className = 'progress-line' + (i < step ? ' done' : '');
+        }
+
+        // Show/hide panels
+        const panel = el(`step-${i}`);
+        if (panel) panel.className = 'step-panel' + (i === step ? ' active' : '');
+      }
+      if (step === 5) {
+        for (let i = 1; i <= 4; i++) {
+          const panel = el(`step-${i}`);
+          if (panel) panel.className = 'step-panel';
+        }
+        el('step-confirm').className = 'step-panel active';
+      }
+      window.scrollTo(0, 0);
+    }
+
+    // ── STEP NAVIGATION ───────────────────────────────
+    el('btn-next-1').addEventListener('click', () => setProgress(2));
+    el('btn-back-2').addEventListener('click', () => setProgress(1));
+
+    el('btn-next-2').addEventListener('click', () => {
+      if (!validateStep2()) return;
+      S.numGuests = parseInt(el('f-guests').value) || 1;
+      S.guestName = el('f-name').value.trim();
+      S.guestEmail = el('f-email').value.trim();
+      S.guestPhone = el('f-phone').value.trim();
+      calcExtraGuests();
+      updatePriceSummary();
+      setProgress(3);
+    });
+
+    el('btn-back-3').addEventListener('click', () => setProgress(2));
+
+    el('btn-next-3').addEventListener('click', () => {
+      calcAddonsTotal();
+      updatePriceSummary();
+      setProgress(4);
+    });
+
+    el('btn-back-4').addEventListener('click', () => setProgress(3));
+
+    el('conflict-back-btn').addEventListener('click', () => {
+      el('conflict-error').classList.remove('show');
+      setProgress(1);
+    });
+
+    // ── FORM VALIDATION ───────────────────────────────
+    function validateStep2() {
+      let ok = true;
+
+      const name = el('f-name').value.trim();
+      if (!name || name.length < 2) {
+        el('err-name').classList.add('show');
+        el('f-name').classList.add('error');
+        ok = false;
+      } else {
+        el('err-name').classList.remove('show');
+        el('f-name').classList.remove('error');
+      }
+
+      const email = el('f-email').value.trim();
+      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      if (!emailOk) {
+        el('err-email').classList.add('show');
+        el('f-email').classList.add('error');
+        ok = false;
+      } else {
+        el('err-email').classList.remove('show');
+        el('f-email').classList.remove('error');
+      }
+
+      const phone = el('f-phone').value.trim();
+      const phoneOk = /^[\d\s\+\-]{7,15}$/.test(phone);
+      if (!phoneOk) {
+        el('err-phone').classList.add('show');
+        el('f-phone').classList.add('error');
+        ok = false;
+      } else {
+        el('err-phone').classList.remove('show');
+        el('f-phone').classList.remove('error');
+      }
+
+      const guests = parseInt(el('f-guests').value) || 0;
+      const maxGuests = S.unit.maxGuests + (S.unit.maxExtraGuests || 0);
+      if (guests < 1 || guests > maxGuests) {
+        el('err-guests').classList.add('show');
+        el('f-guests').classList.add('error');
+        ok = false;
+      } else {
+        el('err-guests').classList.remove('show');
+        el('f-guests').classList.remove('error');
+      }
+
+      return ok;
+    }
+
+    // ── CALENDAR NAVIGATION ───────────────────────────
+    el('cal-prev').addEventListener('click', () => {
+      const today = new Date();
+      if (calYear === today.getFullYear() && calMonth === today.getMonth()) return;
+      calMonth--;
+      if (calMonth < 0) { calMonth = 11; calYear--; }
+      renderCalendar();
+    });
+
+    el('cal-next').addEventListener('click', () => {
+      calMonth++;
+      if (calMonth > 11) { calMonth = 0; calYear++; }
+      renderCalendar();
+    });
+
+    // ── PAYMENT TABS ──────────────────────────────────
+    document.querySelectorAll('.payment-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.payment-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.payment-info-box').forEach(b => b.classList.remove('active'));
+        tab.classList.add('active');
+        S.paymentMethod = tab.dataset.method;
+        el(`pay-${S.paymentMethod}`).classList.add('active');
+      });
+    });
+
+    // ── FILE UPLOAD ───────────────────────────────────
+    const fileInput = el('file-input');
+    const uploadArea = el('upload-area');
+
+    uploadArea.addEventListener('click', () => fileInput.click());
+
+    uploadArea.addEventListener('dragover', e => {
+      e.preventDefault();
+      uploadArea.classList.add('dragover');
+    });
+
+    uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+
+    uploadArea.addEventListener('drop', e => {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+      if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);
+    });
+
+    fileInput.addEventListener('change', e => {
+      if (e.target.files[0]) setFile(e.target.files[0]);
+    });
+
+    function setFile(file) {
+      const errEl = el('err-upload');
+      errEl.style.display = 'none';
+      errEl.textContent = '';
+
+      const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+      if (!allowed.includes(file.type)) {
+        errEl.textContent = 'Only JPG, PNG, or WebP images are allowed.';
+        errEl.style.display = 'block';
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        errEl.textContent = 'File size must be under 10MB.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      S.screenshotFile = file;
+
+      const reader = new FileReader();
+      reader.onload = e => {
+        el('preview-img').src = e.target.result;
+        el('preview-name').textContent = file.name;
+        el('upload-preview').style.display = 'block';
+        uploadArea.querySelector('p').textContent = 'Screenshot selected ✓ Tap to change';
+      };
+      reader.readAsDataURL(file);
+
+      el('btn-confirm').disabled = false;
+    }
+
+    // ── CLOUDINARY UPLOAD ─────────────────────────────
+    function uploadToCloudinary(file, bookingId) {
+      return new Promise((resolve, reject) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', CLOUDINARY_PRESET);
+        formData.append('folder', `payment-screenshots/${CLIENT_ID}/${bookingId}`);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`);
+
+        const bar = el('upload-progress-bar');
+        const fill = el('upload-progress-fill');
+        bar.style.display = 'block';
+
+        xhr.upload.onprogress = e => {
+          if (e.lengthComputable) {
+            fill.style.width = Math.round((e.loaded / e.total) * 90) + '%';
+          }
+        };
+
+        xhr.onload = () => {
+          fill.style.width = '100%';
+          if (xhr.status === 200) {
+            const data = JSON.parse(xhr.responseText);
+            resolve(data.secure_url);
+          } else {
+            reject(new Error('Cloudinary upload failed: ' + xhr.status));
+          }
+        };
+
+        xhr.onerror = () => reject(new Error('Upload failed — check internet connection'));
+        xhr.send(formData);
+      });
+    }
+
+    // ── SUBMIT BOOKING ────────────────────────────────
+    el('btn-confirm').addEventListener('click', async () => {
+      if (S.submitting) return;
+      if (!S.screenshotFile) {
+        showToast('Please upload your payment screenshot first.', 'error');
+        return;
+      }
+
+      S.submitting = true;
+      const btn = el('btn-confirm');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+      el('conflict-error').classList.remove('show');
+
+      try {
+        // Final availability check
+        const conflictCheck = await getDocs(
+          query(
+            collection(clientRef, 'bookings'),
+            where('unitId', '==', unitId),
+            where('status', 'in', ['pending_review', 'confirmed'])
+          )
+        );
+
+        for (const d of conflictCheck.docs) {
+          const b = d.data();
+          if (b.checkIn < S.checkOut && b.checkOut > S.checkIn) {
+            el('conflict-error').classList.add('show');
+            el('conflict-error').scrollIntoView({ behavior: 'smooth' });
+            S.submitting = false;
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> Confirm Booking';
+            return;
+          }
+        }
+
+        // Create Firestore doc to get ID first
+        const bookingsCol = collection(clientRef, 'bookings');
+        const tempRef = doc(bookingsCol);
+        const bookingId = tempRef.id;
+        const referenceNo = 'BK-' + bookingId;
+
+        // Upload screenshot
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading screenshot...';
+        const screenshotURL = await uploadToCloudinary(S.screenshotFile, bookingId);
+
+        // Save booking
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving booking...';
+        const bookingData = {
+          bookingId,
+          referenceNo,
+          unitId,
+          unitName: S.unit.name,
+          guestName: S.guestName,
+          guestEmail: S.guestEmail,
+          guestPhone: S.guestPhone,
+          numGuests: S.numGuests,
+          checkIn: S.checkIn,
+          checkOut: S.checkOut,
+          nights: S.nights,
+          baseTotal: S.baseTotal,
+          extraGuests: S.extraGuests,
+          extraGuestTotal: S.extraGuestTotal,
+          addons: Object.values(S.selectedAddons),
+          addonsTotal: S.addonsTotal,
+          grandTotal: S.grandTotal,
+          paymentMethod: S.paymentMethod,
+          screenshotURL,
+          status: 'pending_review',
+          createdAt: serverTimestamp(),
+        };
+
+        await setDoc(tempRef, bookingData);
+
+        // Call send-receipt (Stage 4 function — silently skip if not deployed yet)
+        try {
+          await fetch(SEND_RECEIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              clientId: CLIENT_ID,
+              bookingId,
+              referenceNo,
+              guestName: S.guestName,
+              guestEmail: S.guestEmail,
+              unitName: S.unit.name,
+              checkIn: S.checkIn,
+              checkOut: S.checkOut,
+              nights: S.nights,
+              grandTotal: S.grandTotal,
+              paymentMethod: S.paymentMethod,
+              screenshotURL,
+              adminPanelUrl: 'https://staycation-admin.netlify.app',
+            })
+          });
+        } catch (e) {
+          console.log('send-receipt not yet deployed, skipping:', e.message);
+        }
+
+        // Show confirmation
+        el('conf-ref').textContent = referenceNo;
+        el('conf-unit').textContent = S.unit.name;
+        el('conf-name').textContent = S.guestName;
+        el('conf-checkin').textContent = formatDisplayDate(S.checkIn);
+        el('conf-checkout').textContent = formatDisplayDate(S.checkOut);
+        el('conf-nights').textContent = `${S.nights} night${S.nights !== 1 ? 's' : ''}`;
+        el('conf-total').textContent = php(S.grandTotal);
+        el('conf-method').textContent = { gcash: 'GCash', paymaya: 'PayMaya', bank: 'Bank Transfer' }[S.paymentMethod] || S.paymentMethod;
+        el('conf-email').textContent = S.guestEmail;
+
+        // Stop the real-time listener
+        if (unsubCalendar) { unsubCalendar(); unsubCalendar = null; }
+
+        setProgress(5);
+
+      } catch (e) {
+        console.error('Submit error:', e);
+        showToast('Something went wrong. Please try again.', 'error', 6000);
+        S.submitting = false;
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Confirm Booking';
+        el('upload-progress-bar').style.display = 'none';
+        el('upload-progress-fill').style.width = '0%';
+      }
+    });
+
+    // ── INIT ──────────────────────────────────────────
+    loadData();
+  </script>
+</body>
+</html>
