@@ -215,18 +215,86 @@
         document.getElementById('nav-name').textContent = name;
         document.getElementById('footer-name').textContent = name;
         document.getElementById('footer-copy').textContent = `© ${new Date().getFullYear()} ${name}. All rights reserved.`;
-        document.title = name + ' — Book Your Stay';
+
+        // SEO
+        if (s.seoTitle) { document.title = s.seoTitle; }
+        else { document.title = name + ' — Book Your Stay'; }
+        if (s.seoKeywords) {
+          let kw = document.querySelector('meta[name="keywords"]');
+          if (!kw) { kw = document.createElement('meta'); kw.name = 'keywords'; document.head.appendChild(kw); }
+          kw.content = s.seoKeywords;
+        }
+        if (s.seoOgImage) {
+          let og = document.querySelector('meta[property="og:image"]');
+          if (!og) { og = document.createElement('meta'); og.setAttribute('property','og:image'); document.head.appendChild(og); }
+          og.content = s.seoOgImage;
+        }
+
         if (s.address) {
           document.getElementById('hero-location').textContent = s.address;
           document.getElementById('footer-address').textContent = s.address;
         }
         if (s.phone) document.getElementById('footer-phone').textContent = s.phone;
         if (s.email) document.getElementById('footer-email').textContent = s.email;
-        if (s.heroImageUrl) {
+
+        // Hero image(s) — array takes priority over legacy single URL
+        const heroImages = Array.isArray(s.heroImages) && s.heroImages.length ? s.heroImages
+                         : s.heroImageUrl ? [s.heroImageUrl] : [];
+        if (heroImages.length) {
           const bg = document.getElementById('hero-bg');
-          bg.style.backgroundImage = `url('${s.heroImageUrl}')`;
+          bg.style.backgroundImage = `url('${heroImages[0]}')`;
           bg.classList.add('loaded');
+          if (heroImages.length > 1) {
+            let idx = 0;
+            setInterval(() => {
+              idx = (idx + 1) % heroImages.length;
+              bg.style.transition = 'opacity .6s';
+              bg.style.opacity = '0';
+              setTimeout(() => {
+                bg.style.backgroundImage = `url('${heroImages[idx]}')`;
+                bg.style.opacity = '1';
+              }, 600);
+            }, 5000);
+          }
         }
+
+        // Promo banner
+        if (s.promoBannerUrl) {
+          const cta = document.querySelector('.cta-banner');
+          if (cta) cta.style.backgroundImage = `url('${s.promoBannerUrl}')`;
+        }
+
+        // Design colors — override CSS variables
+        const root = document.documentElement.style;
+        if (s.primaryColor)       root.setProperty('--primary', s.primaryColor);
+        if (s.primaryColor)       root.setProperty('--primary-dark', s.primaryColor); // close enough
+        if (s.accentColor)        root.setProperty('--accent', s.accentColor);
+        if (s.secondaryColor)     root.setProperty('--secondary', s.secondaryColor);
+        if (s.errorColor)         root.setProperty('--error', s.errorColor);
+
+        // Typography — load Google Fonts dynamically
+        const headingFont = s.headingFont || 'Playfair Display';
+        const bodyFont    = s.bodyFont    || 'Inter';
+        if (headingFont !== 'Playfair Display' || bodyFont !== 'Inter') {
+          const fontsToLoad = [headingFont, bodyFont].filter(Boolean).filter((f,i,a) => a.indexOf(f) === i);
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = `https://fonts.googleapis.com/css2?${fontsToLoad.map(f => `family=${encodeURIComponent(f)}:wght@400;600;700`).join('&')}&display=swap`;
+          document.head.appendChild(link);
+        }
+        root.setProperty('--font-heading', `'${headingFont}', Georgia, serif`);
+        root.setProperty('--font-body', `'${bodyFont}', system-ui, sans-serif`);
+
+        // Section visibility
+        const amenitiesEl = document.getElementById('amenities');
+        if (amenitiesEl && s.showAmenities === false) amenitiesEl.style.display = 'none';
+        const howItWorksEl = document.getElementById('how-it-works');
+        if (howItWorksEl && s.showHowItWorks === false) howItWorksEl.style.display = 'none';
+        const ctaEl = document.querySelector('.cta-banner');
+        if (ctaEl && s.showCTABanner === false) ctaEl.style.display = 'none';
+        const roomsEl = document.getElementById('rooms');
+        if (roomsEl && s.showFeaturedUnits === false) roomsEl.style.display = 'none';
+
       } catch (e) { console.error('Settings:', e); }
     }
 
