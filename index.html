@@ -377,12 +377,11 @@
           </div>`;
         }).join('');
 
-        // Init carousel state + auto-cycle
+        // Init carousel state (manual only — no auto-cycle)
         units.forEach(u => {
           const photos = Array.isArray(u.photoURLs) ? u.photoURLs.filter(Boolean) : [];
           if (photos.length > 1) {
             RC[u.id] = { photos, idx: 0 };
-            setInterval(() => rcNext(u.id), 4000);
           }
         });
 

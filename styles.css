@@ -408,12 +408,11 @@ section { padding: 5rem 0; }
   font-size: 11px;
   z-index: 3;
   transition: background .15s;
-  opacity: 0;
+  opacity: 0.82;
 }
-.room-card:hover .rc-btn { opacity: 1; }
 .rc-prev { left: 8px; }
 .rc-next { right: 8px; }
-.rc-btn:hover { background: rgba(0,0,0,.65); }
+.rc-btn:hover { background: rgba(0,0,0,.65); opacity: 1; }
 .rc-dots {
   position: absolute;
   bottom: 8px;
@@ -821,6 +820,61 @@ footer {
   justify-content: center;
   font-size: 4rem;
   color: var(--border);
+}
+
+/* Property page gallery arrows */
+.gallery-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,.5);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  z-index: 4;
+  transition: background .15s;
+}
+.gallery-btn:hover { background: rgba(0,0,0,.75); }
+.gallery-prev { left: 16px; }
+.gallery-next { right: 16px; }
+.gallery-dots-bar {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 7px;
+  z-index: 4;
+}
+.gallery-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.5);
+  cursor: pointer;
+  transition: background .2s, transform .2s;
+  border: none;
+  padding: 0;
+}
+.gallery-dot.active { background: #fff; transform: scale(1.3); }
+.gallery-counter {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: rgba(0,0,0,.52);
+  color: #fff;
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 12px;
+  z-index: 4;
+  letter-spacing: .02em;
 }
 
 .property-gallery-nav {
