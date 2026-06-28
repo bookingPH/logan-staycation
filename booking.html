@@ -543,6 +543,18 @@
           (S.unit.maxExtraGuests ? ` (extra guests: +${php(S.unit.extraGuestFee || 0)}/person/night)` : '');
         el('f-guests').max = max;
 
+        // Load holiday rates → map of { 'YYYY-MM-DD': { rate, label } }
+        S.holidayRates = {};
+        try {
+          const hrSnap = await getDocs(collection(clientRef, 'holiday_rates'));
+          hrSnap.forEach(d => {
+            const { date, rate, unitId: hUnitId, label } = d.data();
+            if (date && rate && (hUnitId === 'all' || hUnitId === unitId)) {
+              S.holidayRates[date] = { rate, label: label || null };
+            }
+          });
+        } catch (_) {}
+
         // Load add-ons
         const addonsSnap = await getDocs(collection(clientRef, 'addons'));
         S.allAddons = [];
@@ -771,20 +783,31 @@
       if (!S.checkIn || !S.checkOut) return;
       S.nights = diffDays(S.checkIn, S.checkOut);
       let wdNights = 0, weNights = 0, wdTotal = 0, weTotal = 0;
+      // Holiday: map of rate → { nights, total, label } (one entry per unique rate)
+      const hdMap = {};
       let cur = S.checkIn;
       const hasWeekendRate = S.unit.weekendRate && S.unit.weekendRate !== S.unit.weekdayRate;
       while (cur < S.checkOut) {
-        const day = new Date(cur + 'T12:00:00').getDay();
-        const isWeekend = (day === 5 || day === 6) && hasWeekendRate;
-        if (isWeekend) { weNights++; weTotal += S.unit.weekendRate; }
-        else           { wdNights++; wdTotal += S.unit.weekdayRate; }
+        const holiday = S.holidayRates && S.holidayRates[cur];
+        if (holiday) {
+          const r = holiday.rate;
+          if (!hdMap[r]) hdMap[r] = { nights: 0, total: 0, label: holiday.label };
+          hdMap[r].nights++; hdMap[r].total += r;
+        } else {
+          const day = new Date(cur + 'T12:00:00').getDay();
+          const isWeekend = (day === 5 || day === 6) && hasWeekendRate;
+          if (isWeekend) { weNights++; weTotal += S.unit.weekendRate; }
+          else           { wdNights++; wdTotal += S.unit.weekdayRate; }
+        }
         cur = addDays(cur, 1);
       }
-      S.weekdayNights = wdNights;
-      S.weekendNights = weNights;
-      S.weekdayTotal  = wdTotal;
-      S.weekendTotal  = weTotal;
-      S.baseTotal     = wdTotal + weTotal;
+      S.weekdayNights  = wdNights;
+      S.weekendNights  = weNights;
+      S.weekdayTotal   = wdTotal;
+      S.weekendTotal   = weTotal;
+      S.holidayBreakdown = Object.entries(hdMap).map(([rate, v]) => ({ rate: Number(rate), ...v }));
+      S.holidayTotal   = S.holidayBreakdown.reduce((s, h) => s + h.total, 0);
+      S.baseTotal      = wdTotal + weTotal + S.holidayTotal;
       calcGrandTotal();
     }
 
@@ -867,8 +890,19 @@
       } else {
         rows += `<div class="price-row">
           <span>${S.nights} night${S.nights !== 1 ? 's' : ''} × ${php(S.unit?.weekdayRate || 0)}</span>
-          <span>${php(S.baseTotal)}</span>
+          <span>${php(S.weekdayTotal + S.weekendTotal)}</span>
         </div>`;
+      }
+
+      // Holiday rate rows (one row per unique peak rate)
+      if (S.holidayBreakdown && S.holidayBreakdown.length > 0) {
+        S.holidayBreakdown.forEach(h => {
+          const label = h.label ? ` <span style="font-size:0.72em;color:var(--primary);font-weight:600;">(${h.label})</span>` : ` <span style="font-size:0.72em;color:var(--primary);font-weight:600;">(Peak rate)</span>`;
+          rows += `<div class="price-row">
+            <span>${h.nights} peak night${h.nights !== 1 ? 's' : ''} × ${php(h.rate)}${label}</span>
+            <span>${php(h.total)}</span>
+          </div>`;
+        });
       }
 
       if (S.extraGuestTotal > 0) {
