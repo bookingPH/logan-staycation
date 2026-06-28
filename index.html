@@ -208,7 +208,7 @@
 
     async function loadSettings() {
       try {
-        const snap = await getDoc(doc(clientRef, 'settings', 'main'));
+        const snap = await getDoc(doc(clientRef, 'settings', 'public'));
         if (!snap.exists()) return;
         const s = snap.data();
         const name = s.companyName || 'Staycation';

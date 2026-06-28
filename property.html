@@ -168,7 +168,7 @@
 
       try {
         // Load settings
-        const settingsSnap = await getDoc(doc(clientRef, 'settings', 'main'));
+        const settingsSnap = await getDoc(doc(clientRef, 'settings', 'public'));
         if (settingsSnap.exists()) {
           const s = settingsSnap.data();
           const name = s.companyName || 'Staycation';
