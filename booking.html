@@ -277,7 +277,8 @@
           </div>
 
           <div class="transfer-instruction" id="transfer-instruction">
-            Send <strong id="deposit-amount">₱500</strong> and upload your screenshot below
+            Transfer the <strong>Reservation Fee: <span id="deposit-amount">₱500</span></strong> to hold your dates.<br>
+            <span style="font-size:0.8rem;opacity:0.85;">Remaining balance + security deposit collected at check-in.</span>
           </div>
 
           <!-- Upload -->
@@ -839,15 +840,19 @@
         return `<div class="summary-empty">Select dates to see pricing</div>`;
       }
 
+      const reservationFee = S.settings?.downPaymentAmount || 500;
+      const securityDeposit = S.settings?.securityDeposit || 0;
+      const balanceDue = Math.max(0, S.grandTotal - reservationFee);
+
       let rows = `
         <div class="price-row">
-          <span>${S.nights} night${S.nights !== 1 ? 's' : ''}</span>
-          <span><strong>${php(S.baseTotal)}</strong></span>
+          <span>${S.nights} night${S.nights !== 1 ? 's' : ''} × ${php(S.unit?.weekdayRate || 0)}</span>
+          <span>${php(S.baseTotal)}</span>
         </div>`;
 
       if (S.extraGuestTotal > 0) {
         rows += `<div class="price-row">
-          <span>Extra guests (${S.extraGuests})</span>
+          <span>Extra guests (${S.extraGuests} pax)</span>
           <span>${php(S.extraGuestTotal)}</span>
         </div>`;
       }
@@ -860,18 +865,38 @@
         </div>`;
       }
 
-      const depositAmt = S.settings?.downPaymentAmount || 500;
+      const secDepRow = securityDeposit > 0 ? `
+        <div class="price-row" style="color:var(--text-muted);font-style:italic;">
+          <span>Security deposit <em style="font-size:0.75rem;">(refundable at checkout)</em></span>
+          <span>${php(securityDeposit)}</span>
+        </div>` : '';
 
       return rows + `
         <hr class="price-divider">
         <div class="price-total-row">
-          <span>Total</span>
+          <span>Grand Total</span>
           <span class="total-amount">${php(S.grandTotal)}</span>
         </div>
-        <div class="deposit-note">
-          <i class="fa-solid fa-shield-halved" style="color:var(--primary);"></i>
-          Reserve now with <strong>${php(depositAmt)}</strong> only.<br>
-          Balance due at check-in.
+        ${secDepRow}
+        <hr class="price-divider">
+        <div class="pay-section pay-now-section">
+          <div class="pay-section-label"><i class="fa-solid fa-bolt"></i> Pay Now to Reserve</div>
+          <div class="pay-section-row">
+            <span>Reservation Fee</span>
+            <span class="pay-now-amount">${php(reservationFee)}</span>
+          </div>
+          <div class="pay-now-note">Upload GCash / PayMaya / bank screenshot</div>
+        </div>
+        <div class="pay-section pay-later-section">
+          <div class="pay-section-label"><i class="fa-solid fa-calendar-check"></i> Pay at Check-in</div>
+          <div class="pay-section-row">
+            <span>Remaining balance</span>
+            <span>${php(balanceDue)}</span>
+          </div>
+          ${securityDeposit > 0 ? `<div class="pay-section-row">
+            <span>Security deposit</span>
+            <span>${php(securityDeposit)}</span>
+          </div>` : ''}
         </div>`;
     }
 
@@ -1151,10 +1176,10 @@
       el('conflict-error').classList.remove('show');
 
       try {
-        // Final availability check
+        // Final availability check — uses public availability collection (not admin-only bookings)
         const conflictCheck = await getDocs(
           query(
-            collection(clientRef, 'bookings'),
+            collection(clientRef, 'availability'),
             where('unitId', '==', unitId),
             where('status', 'in', ['pending_review', 'confirmed'])
           )
@@ -1184,6 +1209,8 @@
 
         // Save booking
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving booking...';
+        const reservationFee = S.settings?.downPaymentAmount || 500;
+        const securityDeposit = S.settings?.securityDeposit || 0;
         const bookingData = {
           bookingId,
           referenceNo,
@@ -1202,6 +1229,9 @@
           addons: Object.values(S.selectedAddons),
           addonsTotal: S.addonsTotal,
           grandTotal: S.grandTotal,
+          reservationFee,
+          securityDeposit,
+          balanceDueAtCheckin: Math.max(0, S.grandTotal - reservationFee),
           paymentMethod: S.paymentMethod,
           screenshotURL,
           status: 'pending_review',
