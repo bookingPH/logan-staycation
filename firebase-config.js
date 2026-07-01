@@ -6,4 +6,5 @@ export const FIREBASE_CONFIG = {
   messagingSenderId: "441276126461"
 };
 
-export const CLIENT_ID = 'logan-staycation';
+const _urlParams = new URLSearchParams(window.location.search);
+export const CLIENT_ID = _urlParams.get('clientId') || 'logan-staycation';
