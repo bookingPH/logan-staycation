@@ -313,7 +313,7 @@
         <button class="btn btn-outline" id="btn-back-4">
           <i class="fa-solid fa-arrow-left"></i> Back
         </button>
-        <button class="btn btn-primary" id="btn-confirm" disabled>
+        <button class="btn btn-primary" id="btn-confirm">
           <i class="fa-solid fa-check"></i> Confirm Booking
         </button>
       </div>
@@ -542,6 +542,14 @@
         el('guests-hint').textContent = `Base: ${S.unit.maxGuests} guests · Maximum: ${max} guests` +
           (S.unit.maxExtraGuests ? ` (extra guests: +${php(S.unit.extraGuestFee || 0)}/person/night)` : '');
         el('f-guests').max = max;
+
+        // Live-update price summary as guest count is typed
+        el('f-guests').addEventListener('input', () => {
+          const val = parseInt(el('f-guests').value) || 1;
+          S.numGuests = Math.max(1, Math.min(val, max));
+          calcExtraGuests();
+          updatePriceSummary();
+        });
 
         // Load holiday rates → map of { 'YYYY-MM-DD': { rate, label } }
         S.holidayRates = {};
@@ -822,7 +830,7 @@
     function calcAddonsTotal() {
       let total = 0;
       for (const [id, addon] of Object.entries(S.selectedAddons)) {
-        total += addon.billingType === 'pernight' ? addon.price * S.nights : addon.price;
+        total += addon.billingRule === 'pernight' ? addon.price * S.nights : addon.price;
       }
       S.addonsTotal = total;
       calcGrandTotal();
@@ -913,18 +921,14 @@
       }
 
       for (const addon of Object.values(S.selectedAddons)) {
-        const addonTotal = addon.billingType === 'pernight' ? addon.price * S.nights : addon.price;
+        const addonTotal = addon.billingRule === 'pernight' ? addon.price * S.nights : addon.price;
         rows += `<div class="price-row">
           <span>${addon.name}</span>
           <span>${php(addonTotal)}</span>
         </div>`;
       }
 
-      const secDepRow = securityDeposit > 0 ? `
-        <div class="price-row" style="color:var(--text-muted);font-style:italic;">
-          <span>Security deposit <em style="font-size:0.75rem;">(refundable at checkout)</em></span>
-          <span>${php(securityDeposit)}</span>
-        </div>` : '';
+      const totalDueAtCheckin = balanceDue + securityDeposit;
 
       return rows + `
         <hr class="price-divider">
@@ -932,12 +936,11 @@
           <span>Grand Total</span>
           <span class="total-amount">${php(S.grandTotal)}</span>
         </div>
-        ${secDepRow}
         <hr class="price-divider">
         <div class="pay-section pay-now-section">
           <div class="pay-section-label"><i class="fa-solid fa-bolt"></i> Pay Now to Reserve</div>
           <div class="pay-section-row">
-            <span>Reservation Fee</span>
+            <span>Reservation Fee <em style="font-size:0.73rem;font-weight:400;opacity:0.8;">(deductible from total)</em></span>
             <span class="pay-now-amount">${php(reservationFee)}</span>
           </div>
           <div class="pay-now-note">Upload GCash / PayMaya / bank screenshot</div>
@@ -949,9 +952,13 @@
             <span>${php(balanceDue)}</span>
           </div>
           ${securityDeposit > 0 ? `<div class="pay-section-row">
-            <span>Security deposit</span>
+            <span>Security deposit <em style="font-size:0.73rem;font-weight:400;opacity:0.8;">(refundable at checkout)</em></span>
             <span>${php(securityDeposit)}</span>
           </div>` : ''}
+          <div class="pay-section-row" style="font-weight:700;border-top:1px solid rgba(0,0,0,0.08);padding-top:8px;margin-top:4px;">
+            <span>Total due at check-in</span>
+            <span>${php(totalDueAtCheckin)}</span>
+          </div>
         </div>`;
     }
 
@@ -971,7 +978,7 @@
           <div class="addon-checkbox"><i class="fa-solid fa-check"></i></div>
           <div class="addon-body">
             <div class="addon-name">${a.name}</div>
-            <div class="addon-billing">${a.billingType === 'pernight' ? 'Charged per night' : 'One-time charge'}</div>
+            <div class="addon-billing">${a.billingRule === 'pernight' ? 'Charged per night' : 'One-time charge'}</div>
           </div>
           <div class="addon-price">${php(a.price)}</div>
         </div>
@@ -1235,7 +1242,10 @@
     el('btn-confirm').addEventListener('click', async () => {
       if (S.submitting) return;
       if (!S.screenshotFile) {
-        showToast('Please upload your payment screenshot first.', 'error');
+        const errEl = el('err-upload');
+        errEl.textContent = 'Please upload your payment screenshot before confirming.';
+        errEl.style.display = 'block';
+        el('upload-area').scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
       }
 
