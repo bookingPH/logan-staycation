@@ -1,4 +1,4 @@
-export const FIREBASE_CONFIG = {
+﻿export const FIREBASE_CONFIG = {
   apiKey: "AIzaSyDjxQaLXKfuerR3XRgcWVbB6N0HpluKP5Y",
   authDomain: "lester-booking-system.firebaseapp.com",
   projectId: "lester-booking-system",
@@ -6,4 +6,4 @@ export const FIREBASE_CONFIG = {
   messagingSenderId: "441276126461"
 };
 
-export const CLIENT_ID = 'template';
+export const CLIENT_ID = 'logan-staycation';
