@@ -145,6 +145,7 @@
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
     import { getFirestore, doc, collection, getDocs, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
     import { FIREBASE_CONFIG, CLIENT_ID } from './firebase-config.js';
+    import { showSuspendedOverlay } from './suspended-check.js';
 
     const app = initializeApp(FIREBASE_CONFIG);
     const db = getFirestore(app);
@@ -171,6 +172,7 @@
         const settingsSnap = await getDoc(doc(clientRef, 'settings', 'public'));
         if (settingsSnap.exists()) {
           const s = settingsSnap.data();
+          if (s.suspended === true) { showSuspendedOverlay(); return; }
           const name = s.companyName || 'Staycation';
           document.getElementById('nav-name').textContent = name;
           document.title = 'Room Details — ' + name;

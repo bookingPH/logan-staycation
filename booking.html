@@ -394,6 +394,7 @@
       onSnapshot,
     } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
     import { FIREBASE_CONFIG, CLIENT_ID } from './firebase-config.js';
+    import { showSuspendedOverlay } from './suspended-check.js';
 
     // ── INIT ──────────────────────────────────────────
     const app = initializeApp(FIREBASE_CONFIG);
@@ -501,6 +502,7 @@
 
         S.unit = { id: unitSnap.id, ...unitSnap.data() };
         S.settings = settingsSnap.exists() ? settingsSnap.data() : {};
+        if (S.settings.suspended === true) { showSuspendedOverlay(); return; }
 
         // Unit bar
         el('unit-bar').style.display = 'flex';
