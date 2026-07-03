@@ -14,7 +14,7 @@
     <div class="container nav-inner">
       <a href="index.html" class="nav-logo">
         <span class="nav-logo-name" id="nav-name">Staycation</span>
-        <span class="nav-logo-tag">Book Direct</span>
+        <span class="nav-logo-tag" id="nav-tag">Book Direct</span>
       </a>
       <ul class="nav-links">
         <li><a href="index.html#rooms">Rooms</a></li>
@@ -116,6 +116,10 @@
         document.getElementById('nav-name').textContent    = st.companyName;
         document.getElementById('footer-name').textContent = st.companyName;
         document.title = `Cancellation Policy — ${st.companyName}`;
+      }
+      if (st.navTag !== undefined) {
+        const tagEl = document.getElementById('nav-tag');
+        if (st.navTag === '') tagEl.style.display = 'none'; else tagEl.textContent = st.navTag;
       }
 
       const hasCancellation = st.policyCancellation && st.policyCancellation.trim();

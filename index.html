@@ -17,7 +17,7 @@
     <div class="container nav-inner">
       <a href="index.html" class="nav-logo">
         <span class="nav-logo-name" id="nav-name">Staycation</span>
-        <span class="nav-logo-tag">Book Direct</span>
+        <span class="nav-logo-tag" id="nav-tag">Book Direct</span>
       </a>
       <ul class="nav-links">
         <li><a href="#rooms">Rooms</a></li>
@@ -49,8 +49,8 @@
         <i class="fa-solid fa-location-dot"></i>
         <span id="hero-location">Philippines</span>
       </div>
-      <h1 id="hero-title">Your Home Away<br>From Home</h1>
-      <p class="hero-sub">
+      <h1 id="hero-title">Your Home Away From Home</h1>
+      <p class="hero-sub" id="hero-subtitle">
         Affordable stays, zero hassle. Browse our rooms, pick your dates, and book in minutes — no hidden fees.
       </p>
       <div class="hero-actions">
@@ -172,9 +172,9 @@
         <div class="footer-brand">
           <div class="nav-logo">
             <span class="nav-logo-name" id="footer-name">Staycation</span>
-            <span class="nav-logo-tag">Affordable Getaway</span>
+            <span class="nav-logo-tag" id="footer-tagline">Affordable Getaway</span>
           </div>
-          <p>Your go-to spot for a relaxing and affordable staycation. Book directly with us — no middlemen, no extra fees.</p>
+          <p id="footer-text">Your go-to spot for a relaxing and affordable staycation. Book directly with us — no middlemen, no extra fees.</p>
         </div>
         <div class="footer-col">
           <h4>Quick Links</h4>
@@ -208,6 +208,15 @@
     const clientRef = doc(db, 'clients', CLIENT_ID);
     const php = n => '₱' + Number(n).toLocaleString();
 
+    // Client-editable text: undefined -> keep the built-in default already in the
+    // HTML, '' -> client explicitly cleared it so hide the element, otherwise show it.
+    function setEditableText(id, value) {
+      const el = document.getElementById(id);
+      if (!el || value === undefined) return;
+      if (value === '') { el.style.display = 'none'; return; }
+      el.textContent = value;
+    }
+
     async function loadSettings() {
       try {
         const snap = await getDoc(doc(clientRef, 'settings', 'public'));
@@ -218,6 +227,12 @@
         document.getElementById('nav-name').textContent = name;
         document.getElementById('footer-name').textContent = name;
         document.getElementById('footer-copy').textContent = `© ${new Date().getFullYear()} ${name}. All rights reserved.`;
+
+        setEditableText('nav-tag', s.navTag);
+        setEditableText('hero-title', s.heroTitle);
+        setEditableText('hero-subtitle', s.heroSubtitle);
+        setEditableText('footer-tagline', s.footerTagline);
+        setEditableText('footer-text', s.footerText);
 
         // SEO
         if (s.seoTitle) { document.title = s.seoTitle; }

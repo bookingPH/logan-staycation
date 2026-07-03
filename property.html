@@ -16,7 +16,7 @@
     <div class="container nav-inner">
       <a href="index.html" class="nav-logo">
         <span class="nav-logo-name" id="nav-name">Staycation</span>
-        <span class="nav-logo-tag">Book Direct</span>
+        <span class="nav-logo-tag" id="nav-tag">Book Direct</span>
       </a>
       <ul class="nav-links">
         <li><a href="index.html#rooms">Rooms</a></li>
@@ -177,6 +177,10 @@
           document.getElementById('nav-name').textContent = name;
           document.title = 'Room Details — ' + name;
           document.getElementById('footer-copy').textContent = `© ${new Date().getFullYear()} ${name}. All rights reserved.`;
+          if (s.navTag !== undefined) {
+            const tagEl = document.getElementById('nav-tag');
+            if (s.navTag === '') tagEl.style.display = 'none'; else tagEl.textContent = s.navTag;
+          }
           if (s.downPaymentAmount) document.getElementById('box-deposit').textContent = php(s.downPaymentAmount);
         }
 
