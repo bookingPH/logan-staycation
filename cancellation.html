@@ -78,6 +78,7 @@
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
     import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
     import { FIREBASE_CONFIG, CLIENT_ID } from './firebase-config.js';
+    import { applyDesignSettings } from './design-settings.js';
 
     const app = initializeApp(FIREBASE_CONFIG);
     const db  = getFirestore(app);
@@ -111,6 +112,7 @@
     try {
       const snap = await getDoc(doc(db, 'clients', CLIENT_ID, 'settings', 'public'));
       const st   = snap.exists() ? snap.data() : {};
+      applyDesignSettings(st);
 
       if (st.companyName) {
         document.getElementById('nav-name').textContent    = st.companyName;

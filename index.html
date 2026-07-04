@@ -202,6 +202,7 @@
     import { getFirestore, doc, collection, getDocs, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
     import { FIREBASE_CONFIG, CLIENT_ID } from './firebase-config.js';
     import { showSuspendedOverlay } from './suspended-check.js';
+    import { applyDesignSettings } from './design-settings.js';
 
     const app = initializeApp(FIREBASE_CONFIG);
     const db = getFirestore(app);
@@ -291,26 +292,8 @@
           if (cta) cta.style.backgroundImage = `url('${s.promoBannerUrl}')`;
         }
 
-        // Design colors — override CSS variables
-        const root = document.documentElement.style;
-        if (s.primaryColor)       root.setProperty('--primary', s.primaryColor);
-        if (s.primaryColor)       root.setProperty('--primary-dark', s.primaryColor); // close enough
-        if (s.accentColor)        root.setProperty('--accent', s.accentColor);
-        if (s.secondaryColor)     root.setProperty('--secondary', s.secondaryColor);
-        if (s.errorColor)         root.setProperty('--error', s.errorColor);
-
-        // Typography — load Google Fonts dynamically
-        const headingFont = s.headingFont || 'Playfair Display';
-        const bodyFont    = s.bodyFont    || 'Inter';
-        if (headingFont !== 'Playfair Display' || bodyFont !== 'Inter') {
-          const fontsToLoad = [headingFont, bodyFont].filter(Boolean).filter((f,i,a) => a.indexOf(f) === i);
-          const link = document.createElement('link');
-          link.rel = 'stylesheet';
-          link.href = `https://fonts.googleapis.com/css2?${fontsToLoad.map(f => `family=${encodeURIComponent(f)}:wght@400;600;700`).join('&')}&display=swap`;
-          document.head.appendChild(link);
-        }
-        root.setProperty('--font-heading', `'${headingFont}', Georgia, serif`);
-        root.setProperty('--font-body', `'${bodyFont}', system-ui, sans-serif`);
+        // Design colors, background, and fonts — shared across all pages
+        applyDesignSettings(s);
 
         // Section visibility
         const amenitiesEl = document.getElementById('amenities');
